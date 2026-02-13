@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floating Step Calculator</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.02em;
+  }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .calculator {
+    background: #16213e;
+    border: 1px solid #2a2a4a;
+    border-radius: 10px;
+    padding: 1.5rem;
+  }
+
+  .calculator h2 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #a8b2d1;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+
+  .inputs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .input-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .input-group label {
+    font-size: 0.8rem;
+    color: #8892b0;
+    font-weight: 500;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 0.55rem 0.7rem;
+    background: #0f1a33;
+    border: 1px solid #2a2a4a;
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .input-group input:focus {
+    border-color: #5a7abf;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead th {
+    text-align: left;
+    padding: 0.5rem 0.6rem;
+    color: #8892b0;
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #2a2a4a;
+  }
+
+  tbody tr:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  tbody tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  tbody td {
+    padding: 0.45rem 0.6rem;
+  }
+
+  tbody td:first-child {
+    color: #8892b0;
+    font-weight: 500;
+  }
+
+  .negative {
+    color: #ff6b6b;
+    font-weight: 500;
+  }
+
+  @media (max-width: 700px) {
+    main {
+      grid-template-columns: 1fr;
+    }
+
+    body {
+      padding: 1rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+    }
+
+    .inputs {
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Floating Step Calculator</h1>
+</header>
+
+<main>
+  <section class="calculator">
+    <h2>Find Step Width</h2>
+    <div class="inputs">
+      <div class="input-group">
+        <label for="spacing1">Spacing (in)</label>
+        <input type="number" id="spacing1" value="6" step="any">
+      </div>
+      <div class="input-group">
+        <label for="length1">Total Length (ft)</label>
+        <input type="number" id="length1" value="7.5" step="any">
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th># Steps</th><th>Step Width</th></tr>
+      </thead>
+      <tbody id="results1"></tbody>
+    </table>
+  </section>
+
+  <section class="calculator">
+    <h2>Find Spacing</h2>
+    <div class="inputs">
+      <div class="input-group">
+        <label for="width2">Step Width (in)</label>
+        <input type="number" id="width2" value="84" step="any">
+      </div>
+      <div class="input-group">
+        <label for="length2">Total Length (ft)</label>
+        <input type="number" id="length2" value="23" step="any">
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr><th># Steps</th><th>Spacing</th></tr>
+      </thead>
+      <tbody id="results2"></tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+  function calcStepWidth(spacing, totalLengthFt) {
+    const totalIn = totalLengthFt * 12;
+    const tbody = document.getElementById("results1");
+    tbody.innerHTML = "";
+    for (let n = 2; n <= 15; n++) {
+      const width = (totalIn - (n + 1) * spacing) / n;
+      const tr = document.createElement("tr");
+      const neg = width < 0 ? ' class="negative"' : "";
+      tr.innerHTML = '<td>' + n + '</td><td' + neg + '>' + width.toFixed(2) + ' in</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  function calcSpacing(stepWidth, totalLengthFt) {
+    const totalIn = totalLengthFt * 12;
+    const tbody = document.getElementById("results2");
+    tbody.innerHTML = "";
+    for (let n = 2; n <= 15; n++) {
+      const spacing = (totalIn - n * stepWidth) / (n + 1);
+      const tr = document.createElement("tr");
+      const neg = spacing < 0 ? ' class="negative"' : "";
+      tr.innerHTML = '<td>' + n + '</td><td' + neg + '>' + spacing.toFixed(2) + ' in</td>';
+      tbody.appendChild(tr);
+    }
+  }
+
+  const spacing1 = document.getElementById("spacing1");
+  const length1 = document.getElementById("length1");
+  const width2 = document.getElementById("width2");
+  const length2 = document.getElementById("length2");
+
+  function update1() {
+    const s = parseFloat(spacing1.value);
+    const l = parseFloat(length1.value);
+    if (!isNaN(s) && !isNaN(l)) calcStepWidth(s, l);
+  }
+
+  function update2() {
+    const w = parseFloat(width2.value);
+    const l = parseFloat(length2.value);
+    if (!isNaN(w) && !isNaN(l)) calcSpacing(w, l);
+  }
+
+  spacing1.addEventListener("input", update1);
+  length1.addEventListener("input", update1);
+  width2.addEventListener("input", update2);
+  length2.addEventListener("input", update2);
+
+  update1();
+  update2();
+</script>
+
+</body>
+</html>
