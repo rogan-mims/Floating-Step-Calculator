@@ -63,6 +63,23 @@
     gap: 0.3rem;
   }
 
+  .ft-in {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .ft-in input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ft-in .unit {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #8892b0;
+  }
+
   .input-group label {
     font-size: 0.8rem;
     color: #8892b0;
@@ -160,8 +177,11 @@
         <input type="number" id="spacing1" value="6" step="any">
       </div>
       <div class="input-group">
-        <label for="length1">Total Length (ft)</label>
-        <input type="number" id="length1" value="7.5" step="any">
+        <label>Total Length</label>
+        <div class="ft-in">
+          <input type="number" id="length1ft" value="7" step="any"><span class="unit">ft</span>
+          <input type="number" id="length1in" value="6" step="any"><span class="unit">in</span>
+        </div>
       </div>
     </div>
     <table>
@@ -180,8 +200,11 @@
         <input type="number" id="width2" value="84" step="any">
       </div>
       <div class="input-group">
-        <label for="length2">Total Length (ft)</label>
-        <input type="number" id="length2" value="23" step="any">
+        <label>Total Length</label>
+        <div class="ft-in">
+          <input type="number" id="length2ft" value="23" step="any"><span class="unit">ft</span>
+          <input type="number" id="length2in" value="0" step="any"><span class="unit">in</span>
+        </div>
       </div>
     </div>
     <table>
@@ -194,8 +217,7 @@
 </main>
 
 <script>
-  function calcStepWidth(spacing, totalLengthFt) {
-    const totalIn = totalLengthFt * 12;
+  function calcStepWidth(spacing, totalIn) {
     const tbody = document.getElementById("results1");
     tbody.innerHTML = "";
     for (let n = 2; n <= 15; n++) {
@@ -207,8 +229,7 @@
     }
   }
 
-  function calcSpacing(stepWidth, totalLengthFt) {
-    const totalIn = totalLengthFt * 12;
+  function calcSpacing(stepWidth, totalIn) {
     const tbody = document.getElementById("results2");
     tbody.innerHTML = "";
     for (let n = 2; n <= 15; n++) {
@@ -221,26 +242,36 @@
   }
 
   const spacing1 = document.getElementById("spacing1");
-  const length1 = document.getElementById("length1");
+  const length1ft = document.getElementById("length1ft");
+  const length1in = document.getElementById("length1in");
   const width2 = document.getElementById("width2");
-  const length2 = document.getElementById("length2");
+  const length2ft = document.getElementById("length2ft");
+  const length2in = document.getElementById("length2in");
+
+  function getTotalIn(ftEl, inEl) {
+    const ft = parseFloat(ftEl.value) || 0;
+    const inc = parseFloat(inEl.value) || 0;
+    return ft * 12 + inc;
+  }
 
   function update1() {
     const s = parseFloat(spacing1.value);
-    const l = parseFloat(length1.value);
-    if (!isNaN(s) && !isNaN(l)) calcStepWidth(s, l);
+    const totalIn = getTotalIn(length1ft, length1in);
+    if (!isNaN(s)) calcStepWidth(s, totalIn);
   }
 
   function update2() {
     const w = parseFloat(width2.value);
-    const l = parseFloat(length2.value);
-    if (!isNaN(w) && !isNaN(l)) calcSpacing(w, l);
+    const totalIn = getTotalIn(length2ft, length2in);
+    if (!isNaN(w)) calcSpacing(w, totalIn);
   }
 
   spacing1.addEventListener("input", update1);
-  length1.addEventListener("input", update1);
+  length1ft.addEventListener("input", update1);
+  length1in.addEventListener("input", update1);
   width2.addEventListener("input", update2);
-  length2.addEventListener("input", update2);
+  length2ft.addEventListener("input", update2);
+  length2in.addEventListener("input", update2);
 
   update1();
   update2();
